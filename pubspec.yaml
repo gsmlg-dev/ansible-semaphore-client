@@ -1,0 +1,63 @@
+name: semaphore
+description: Ansible semaphore client
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  go_router: ^10.0.0
+  flutter_riverpod: ^2.3.6
+  riverpod_annotation: ^2.1.1
+  shared_preferences: ^2.2.0
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.0.15
+  material_neumorphic: ^1.1.1
+  ansible_semaphore: ^1.1.0
+  dio: ^5.3.1
+  pluto_grid: ^7.0.2
+  freezed_annotation: ^2.4.1
+  flutter_secure_storage: ^8.0.0
+  timeago: ^3.5.0
+  flutter_animated_icons: ^1.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  build_runner: ^2.4.6
+  go_router_builder: ^2.2.4
+  riverpod_generator: ^2.2.4
+  custom_lint: ^0.4.0
+  riverpod_lint: ^1.4.0
+  isar_generator: ^3.1.0+1
+  freezed: ^2.4.1
+  flutter_launcher_icons: ^0.13.0
+
+flutter:
+  uses-material-design: true
+
+# Run `dart pub run flutter_launcher_icons:main` to generate the icons.
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: "launcher_icon"
+  ios: true
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    background_color: "#005057"
+    theme_color: "#005057"
+  windows:
+    generate: true
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
