@@ -7,7 +7,7 @@ Run ansible task from your phone.
 Download from 
 
 - [AppStore]()
-- [PlayStore]()
+- [PlayStore](https://play.google.com/store/apps/details?id=org.gsmlg.semaphore)
 - [F-Droid]()
 
 ## Screens
