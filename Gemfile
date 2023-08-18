@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# source "https://rubygems.org/"
-source "https://nexus.gsmlg.net/repository/ruby-gems/"
+source "https://rubygems.org/"
 
 gem "fastlane"
 
