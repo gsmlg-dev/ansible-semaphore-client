@@ -1,0 +1,3 @@
+Run Ansible Playbook from  your phone by using ansible semaphore server.
+
+Install ansible semaphore server by this link, https://github.com/ansible-semaphore/semaphore.
