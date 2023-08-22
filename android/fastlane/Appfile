@@ -1,2 +1,0 @@
-package_name ENV["APP_IDENTIFIER"] || "org.gsmlg.semaphore"
-json_key_file ENV["PLAY_CONSOLE_SA_FILE"]
