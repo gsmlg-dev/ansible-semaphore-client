@@ -6,13 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/text_duration.dart';
+import 'package:semaphore/adaptive/text_null.dart';
+import 'package:semaphore/adaptive/text_timeago.dart';
 import 'package:semaphore/components/run_task_form.dart';
 import 'package:semaphore/components/status_chip.dart';
 import 'package:semaphore/state/api_config.dart';
 import 'package:semaphore/state/projects.dart';
 import 'package:semaphore/state/projects/task.dart';
 import 'package:semaphore/utils/base_griddata.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:semaphore/adaptive/dialog.dart';
 
 part 'template_task.g.dart';
 part 'template_task.freezed.dart';
@@ -43,8 +46,7 @@ class TemplateTaskDataTable extends BaseGridData<Task> {
       type: PlutoColumnType.text(),
       renderer: (PlutoColumnRendererContext renderContext) {
         final String? value = renderContext.cell.value;
-        if (value == 'null') return const Text('--');
-        return Text(value ?? '--');
+        return AdaptiveTextNull(value);
       },
     ),
     PlutoColumn(
@@ -67,10 +69,7 @@ class TemplateTaskDataTable extends BaseGridData<Task> {
       type: PlutoColumnType.text(),
       renderer: (PlutoColumnRendererContext renderContext) {
         final DateTime? value = renderContext.cell.value;
-        if (value == null) {
-          return const Text('--');
-        }
-        return Text(timeago.format(value));
+        return AdaptiveTextTimeago(value);
       },
     ),
     PlutoColumn(
@@ -79,13 +78,7 @@ class TemplateTaskDataTable extends BaseGridData<Task> {
       type: PlutoColumnType.text(),
       renderer: (PlutoColumnRendererContext renderContext) {
         final [start, end] = renderContext.cell.value;
-        final DateTime endTime = end ?? DateTime.now();
-        if (start == null) {
-          return const Text('--');
-        }
-        final DateTime startTime = start;
-        final d = endTime.difference(startTime);
-        return Text('${d.inSeconds}s');
+        return AdaptiveTextDuration(start, end);
       },
     ),
     PlutoColumn(
@@ -193,16 +186,12 @@ class TemplateTaskList extends _$TemplateTaskList {
   }
 
   void prepareRunTask(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog.fullscreen(
-            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-            child: RunTaskFrom(
-              templateId: templateId,
-            ),
-          );
-        });
+    adaptiveDialog(
+      context: context,
+      child: RunTaskFrom(
+        templateId: templateId,
+      ),
+    );
   }
 
   Future<void> runTask({

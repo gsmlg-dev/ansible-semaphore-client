@@ -12,17 +12,19 @@ class Projects extends _$Projects {
     try {
       final api = ref.read(semaphoreApiProvider).getProjectsApi();
       final resp = await api.projectsGet();
+      print('projects resp: $resp');
       return resp.data ?? <Project>[];
     } catch (e) {
       return <Project>[];
     }
   }
 
-  void getProjects() async {
+  Future<void> getProjects() async {
     final api = ref.read(semaphoreApiProvider).getProjectsApi();
     state = await AsyncValue.guard(() async {
       try {
         final resp = await api.projectsGet();
+        print('projects resp: $resp');
         return resp.data ?? <Project>[];
       } catch (e) {
         return <Project>[];
@@ -38,6 +40,7 @@ class CurrentProject extends _$CurrentProject {
     ref.keepAlive();
     try {
       final projects = await ref.read(projectsProvider.future);
+      print('projects: $projects');
       return projects.first;
     } catch (e) {
       return null;

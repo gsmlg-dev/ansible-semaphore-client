@@ -3,7 +3,7 @@ description: Ansible semaphore client
 
 publish_to: "none"
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -28,6 +28,11 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   timeago: ^3.5.0
   flutter_animated_icons: ^1.0.1
+  macos_ui: ^2.0.0
+  fluent_ui: ^4.7.3
+  system_theme: ^2.3.1
+  system_tray: ^2.0.3
+  google_fonts: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +50,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - "assets/icon/icon.png"
 
 # Run `dart pub run flutter_launcher_icons:main` to generate the icons.
 flutter_launcher_icons:

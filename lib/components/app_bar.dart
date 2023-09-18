@@ -9,16 +9,16 @@ class LocalAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const LocalAppBar({Key? key, String? title, this.actions = const []})
-      : title = title ?? 'Ansible Semaphore',
-        preferredSize = const Size.fromHeight(NeumorphicAppBar.toolbarHeight),
+  const LocalAppBar(
+      {Key? key, this.title = 'Ansible Semaphore', this.actions = const []})
+      : preferredSize = const Size.fromHeight(NeumorphicAppBar.toolbarHeight),
         super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final neumorphicTheme = theme.extension<NeumorphicTheme>()!;
-    final style = neumorphicTheme.getNeumorphicStyle();
+    final style = neumorphicTheme.style;
 
     return NeumorphicAppBar(
       depth: -4,

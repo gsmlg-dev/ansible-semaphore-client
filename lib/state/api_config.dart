@@ -41,15 +41,19 @@ class SemaphoreApi extends _$SemaphoreApi {
     final apiUrl = ref.read(apiUrlProvider);
     final token = ref.read(userTokenProvider);
     ref.keepAlive();
-    if (token != null && token.isNotEmpty) {
+    if (token != null &&
+        token.isNotEmpty &&
+        Uri.parse(apiUrl).host.isNotEmpty) {
       return AnsibleSemaphore(
         dio: Dio(BaseOptions(
             baseUrl: apiUrl, headers: {'Authorization': 'Bearer $token'})),
       );
-    } else {
+    } else if (Uri.parse(apiUrl).host.isNotEmpty) {
       return AnsibleSemaphore(
         basePathOverride: apiUrl,
       );
+    } else {
+      return AnsibleSemaphore();
     }
   }
 

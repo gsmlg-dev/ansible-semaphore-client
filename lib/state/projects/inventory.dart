@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:ansible_semaphore/ansible_semaphore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/alert_dialog.dart';
+import 'package:semaphore/adaptive/button.dart';
+import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/inventory/form.dart';
 import 'package:semaphore/state/api_config.dart';
 import 'package:semaphore/state/projects.dart';
@@ -29,6 +36,16 @@ class InventoryDataTable extends BaseGridData<Inventory> {
         type: PlutoColumnType.text(),
         renderer: (context) {
           final Inventory inventory = context.cell.value;
+          if (Platform.isMacOS) {
+            return Consumer(builder: (context, ref, _) {
+              final theme = MacosTheme.of(context);
+              return Text(
+                  inventory.type == InventoryTypeEnum.file
+                      ? inventory.inventory ?? ''
+                      : '--',
+                  style: theme.typography.body);
+            });
+          }
           return Text(inventory.type == InventoryTypeEnum.file
               ? inventory.inventory ?? ''
               : '--');
@@ -42,59 +59,49 @@ class InventoryDataTable extends BaseGridData<Inventory> {
           return Consumer(builder: (context, ref, _) {
             return Wrap(
               children: [
-                IconButton(
+                AdaptiveIconButton(
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog.fullscreen(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
-                              child: InventoryForm(inventoryId: inventory.id),
-                            );
-                          });
+                      adaptiveDialog(
+                        context: context,
+                        child: InventoryForm(inventoryId: inventory.id),
+                      );
                     },
-                    icon: const Icon(Icons.edit)),
-                IconButton(
+                    iconData: (Icons.edit)),
+                AdaptiveIconButton(
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Delete Inventory'),
-                              content: const Text(
-                                  'Are you sure you want to delete this inventory?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Cancel')),
-                                TextButton(
-                                    onPressed: () async {
-                                      final api = ref
-                                          .read(semaphoreApiProvider)
-                                          .getProjectApi();
-                                      final current = await ref
-                                          .read(currentProjectProvider.future);
-                                      await api
-                                          .projectProjectIdInventoryInventoryIdDelete(
-                                              projectId: current!.id!,
-                                              inventoryId: inventory.id!);
-                                      if (context.mounted) {
-                                        Navigator.of(context).pop();
-                                      }
-                                      ref
-                                          .read(inventoryListProvider.notifier)
-                                          .loadRows();
-                                    },
-                                    child: const Text('Delete')),
-                              ],
-                            );
-                          });
+                      adaptiveAlertDialog(
+                        context: context,
+                        title: const Text('Delete Inventory'),
+                        content: const Text(
+                            'Are you sure you want to delete this inventory?'),
+                        secondaryButton: AdaptiveButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel')),
+                        primaryButton: AdaptiveButton(
+                            onPressed: () async {
+                              final api = ref
+                                  .read(semaphoreApiProvider)
+                                  .getProjectApi();
+                              final current =
+                                  await ref.read(currentProjectProvider.future);
+                              await api
+                                  .projectProjectIdInventoryInventoryIdDelete(
+                                      projectId: current!.id!,
+                                      inventoryId: inventory.id!);
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                              ref
+                                  .read(inventoryListProvider.notifier)
+                                  .loadRows();
+                            },
+                            child: const Text('Delete',
+                                style: TextStyle(color: Colors.red))),
+                      );
                     },
-                    icon: const Icon(Icons.delete)),
+                    iconData: (Icons.delete)),
               ],
             );
           });

@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 abstract class BaseGridData<T> {
@@ -19,7 +22,22 @@ abstract class BaseGridData<T> {
   // Future<List<PlutoRow>> asyncMapDataWithRef(
   //     List<T> data, AutoDisposeNotifierProviderRef<BaseGridData> ref);
 
-  PlutoGridConfiguration configurationWithTheme(ThemeData theme) {
+  PlutoGridConfiguration configurationWithTheme(BuildContext context) {
+    if (Platform.isMacOS) {
+      final theme = MacosTheme.of(context);
+      return configuration.copyWith(
+          style: configuration.style.copyWith(
+        gridBackgroundColor: theme.canvasColor,
+        rowColor: theme.canvasColor,
+        oddRowColor: PlutoOptional(_darken(theme.canvasColor)),
+        evenRowColor: PlutoOptional(theme.canvasColor),
+        activatedColor: _darken(theme.canvasColor, 0.125),
+        borderColor: theme.dividerColor,
+        cellTextStyle: theme.typography.body,
+        columnTextStyle: theme.typography.headline,
+      ));
+    }
+    final theme = Theme.of(context);
     return configuration.copyWith(
         style: configuration.style.copyWith(
       gridBackgroundColor: theme.colorScheme.secondaryContainer,

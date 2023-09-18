@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/icon.dart';
+import 'package:semaphore/adaptive/text_duration.dart';
+import 'package:semaphore/adaptive/text_null.dart';
+import 'package:semaphore/adaptive/text_timeago.dart';
 import 'package:semaphore/components/status_chip.dart';
 import 'package:semaphore/components/task_output_view.dart';
 import 'package:semaphore/components/template_link.dart';
 import 'package:semaphore/state/api_config.dart';
 import 'package:semaphore/state/projects.dart';
 import 'package:semaphore/utils/base_griddata.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:semaphore/adaptive/dialog.dart';
 
 part 'task.g.dart';
 
@@ -38,7 +42,7 @@ class TaskDataTable extends BaseGridData<Task> {
                   },
                 );
               }),
-              const Icon(Icons.keyboard_arrow_left),
+              const AdaptiveIcon(Icons.keyboard_arrow_left),
               TemplateLink(templateId: renderContext.cell.value.templateId),
             ]);
       },
@@ -49,8 +53,7 @@ class TaskDataTable extends BaseGridData<Task> {
       type: PlutoColumnType.text(),
       renderer: (PlutoColumnRendererContext renderContext) {
         final String? value = renderContext.cell.value;
-        if (value == 'null') return const Text('--');
-        return Text(value ?? '--');
+        return AdaptiveTextNull(value);
       },
     ),
     PlutoColumn(
@@ -73,10 +76,7 @@ class TaskDataTable extends BaseGridData<Task> {
       type: PlutoColumnType.text(),
       renderer: (PlutoColumnRendererContext renderContext) {
         final DateTime? value = renderContext.cell.value;
-        if (value == null) {
-          return const Text('--');
-        }
-        return Text(timeago.format(value));
+        return AdaptiveTextTimeago(value);
       },
     ),
     PlutoColumn(
@@ -85,13 +85,7 @@ class TaskDataTable extends BaseGridData<Task> {
       type: PlutoColumnType.text(),
       renderer: (PlutoColumnRendererContext renderContext) {
         final [start, end] = renderContext.cell.value;
-        final DateTime endN = end ?? DateTime.now();
-        if (start == null) {
-          return const Text('--');
-        }
-        final DateTime startN = start;
-        final d = endN.difference(startN);
-        return Text('${d.inSeconds} ${d.inSeconds > 1 ? "seconds" : "second"}');
+        return AdaptiveTextDuration(start, end);
       },
     ),
   ];
@@ -174,16 +168,12 @@ class TaskList extends _$TaskList {
   }
 
   showOutput(BuildContext context, int id) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog.fullscreen(
-            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-            child: TaskOutputView(
-              id: id,
-            ),
-          );
-        });
+    adaptiveDialog(
+      context: context,
+      child: TaskOutputView(
+        id: id,
+      ),
+    );
   }
 }
 

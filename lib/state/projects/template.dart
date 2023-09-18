@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/environment_name.dart';
 import 'package:semaphore/components/inventory_name.dart';
 import 'package:semaphore/components/repository.dart';
@@ -78,15 +79,14 @@ class TemplateDataTable extends BaseGridData<Template> {
       renderer: (PlutoColumnRendererContext renderContext) {
         final value = renderContext.cell.value;
         return Consumer(builder: (context, ref, _) {
-          return TextButton.icon(
-              onPressed: () {
-                ref
-                    .read(
-                        templateTaskListProvider(templateId: value.id).notifier)
-                    .prepareRunTask(context);
-              },
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('RUN'));
+          return AdaptiveIconButton(
+            onPressed: () {
+              ref
+                  .read(templateTaskListProvider(templateId: value.id).notifier)
+                  .prepareRunTask(context);
+            },
+            iconData: (Icons.play_arrow),
+          );
         });
       },
     ),

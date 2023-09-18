@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:semaphore/state/projects/repository.dart';
 
 class RepositoryName extends ConsumerWidget {
@@ -12,12 +15,18 @@ class RepositoryName extends ConsumerWidget {
     final repository = ref.watch(repositoryFamily(id));
 
     return repository.when(
-      data: (repository) => Text(
-        repository.name ?? '--',
-        overflow: TextOverflow.ellipsis,
-      ),
+      data: (repository) => Platform.isMacOS
+          ? Text(repository.name ?? '--',
+              overflow: TextOverflow.ellipsis,
+              style: MacosTheme.of(context).typography.body)
+          : Text(
+              repository.name ?? '--',
+              overflow: TextOverflow.ellipsis,
+            ),
       loading: () => const LinearProgressIndicator(),
-      error: (error, stackTrace) => const Text('N/A'),
+      error: (error, stackTrace) => Platform.isMacOS
+          ? Text('N/A', style: MacosTheme.of(context).typography.body)
+          : const Text('N/A'),
     );
   }
 }

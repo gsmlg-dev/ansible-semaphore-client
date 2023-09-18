@@ -1,8 +1,14 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/alert_dialog.dart';
+import 'package:semaphore/adaptive/button.dart';
+import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/access_key/form.dart';
 import 'package:semaphore/state/api_config.dart';
 import 'package:semaphore/state/projects.dart';
@@ -32,58 +38,46 @@ class AccessKeyDataTable extends BaseGridData<AccessKey> {
         return Consumer(builder: (context, ref, _) {
           return Wrap(
             children: [
-              IconButton(
+              AdaptiveIconButton(
                   onPressed: () {
-                    showDialog(
+                    adaptiveDialog(
                         context: context,
-                        builder: (context) {
-                          return Dialog.fullscreen(
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                            child: AccessKeyForm(accessKeyId: accessKey.id),
-                          );
-                        });
+                        child: AccessKeyForm(accessKeyId: accessKey.id));
                   },
-                  icon: const Icon(Icons.edit)),
-              IconButton(
+                  iconData: (Icons.edit)),
+              AdaptiveIconButton(
                   onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Delete AccessKey'),
-                            content: const Text(
-                                'Are you sure you want to delete this accessKey?'),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel')),
-                              TextButton(
-                                  onPressed: () async {
-                                    final api = ref
-                                        .read(semaphoreApiProvider)
-                                        .getProjectApi();
-                                    final current = await ref
-                                        .read(currentProjectProvider.future);
-                                    await api.projectProjectIdKeysKeyIdDelete(
-                                        projectId: current!.id!,
-                                        keyId: accessKey.id!);
-                                    if (context.mounted) {
-                                      Navigator.of(context).pop();
-                                    }
-                                    ref
-                                        .read(accessKeyListProvider.notifier)
-                                        .loadRows();
-                                  },
-                                  child: const Text('Delete')),
-                            ],
-                          );
-                        });
+                    adaptiveAlertDialog(
+                      context: context,
+                      title: const Text('Delete AccessKey'),
+                      content: const Text(
+                          'Are you sure you want to delete this accessKey?'),
+                      primaryButton: AdaptiveButton(
+                          controlSize: ControlSize.large,
+                          onPressed: () async {
+                            final api =
+                                ref.read(semaphoreApiProvider).getProjectApi();
+                            final current =
+                                await ref.read(currentProjectProvider.future);
+                            await api.projectProjectIdKeysKeyIdDelete(
+                                projectId: current!.id!, keyId: accessKey.id!);
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                            ref.read(accessKeyListProvider.notifier).loadRows();
+                          },
+                          child: const Text('Delete',
+                              style: TextStyle(color: Colors.red))),
+                      secondaryButton: AdaptiveButton(
+                        controlSize: ControlSize.large,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                    );
                   },
-                  icon: const Icon(Icons.delete)),
+                  iconData: (Icons.delete)),
             ],
           );
         });

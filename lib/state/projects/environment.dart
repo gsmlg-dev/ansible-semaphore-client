@@ -1,12 +1,17 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/button.dart';
+import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/environment/form.dart';
 import 'package:semaphore/state/api_config.dart';
 import 'package:semaphore/state/projects.dart';
 import 'package:semaphore/utils/base_griddata.dart';
+import 'package:semaphore/adaptive/alert_dialog.dart';
 
 part 'environment.g.dart';
 
@@ -27,60 +32,51 @@ class EnvironmentDataTable extends BaseGridData<Environment> {
         return Consumer(builder: (context, ref, _) {
           return Wrap(
             children: [
-              IconButton(
+              AdaptiveIconButton(
+                onPressed: () {
+                  adaptiveDialog(
+                    context: context,
+                    child: EnvironmentForm(environmentId: environment.id),
+                  );
+                },
+                iconData: Icons.edit,
+              ),
+              AdaptiveIconButton(
                   onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog.fullscreen(
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                            child:
-                                EnvironmentForm(environmentId: environment.id),
-                          );
-                        });
+                    adaptiveAlertDialog(
+                      context: context,
+                      title: const Text('Delete Environment'),
+                      content: const Text(
+                          'Are you sure you want to delete this environment?'),
+                      secondaryButton: AdaptiveButton(
+                          controlSize: ControlSize.large,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel')),
+                      primaryButton: AdaptiveButton(
+                          controlSize: ControlSize.large,
+                          onPressed: () async {
+                            final api =
+                                ref.read(semaphoreApiProvider).getProjectApi();
+                            final current =
+                                await ref.read(currentProjectProvider.future);
+                            await api
+                                .projectProjectIdEnvironmentEnvironmentIdDelete(
+                                    projectId: current!.id!,
+                                    environmentId: environment.id!);
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                            ref
+                                .read(environmentListProvider.notifier)
+                                .loadRows();
+                          },
+                          child: const Text('Delete',
+                              style: TextStyle(color: Colors.red))),
+                    );
                   },
-                  icon: const Icon(Icons.edit)),
-              IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Delete Environment'),
-                            content: const Text(
-                                'Are you sure you want to delete this environment?'),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel')),
-                              TextButton(
-                                  onPressed: () async {
-                                    final api = ref
-                                        .read(semaphoreApiProvider)
-                                        .getProjectApi();
-                                    final current = await ref
-                                        .read(currentProjectProvider.future);
-                                    await api
-                                        .projectProjectIdEnvironmentEnvironmentIdDelete(
-                                            projectId: current!.id!,
-                                            environmentId: environment.id!);
-                                    if (context.mounted) {
-                                      Navigator.of(context).pop();
-                                    }
-                                    ref
-                                        .read(environmentListProvider.notifier)
-                                        .loadRows();
-                                  },
-                                  child: const Text('Delete')),
-                            ],
-                          );
-                        });
-                  },
-                  icon: const Icon(Icons.delete)),
+                  iconData: Icons.delete),
             ],
           );
         });
