@@ -117,8 +117,8 @@ class EnvironmentFormRequestProvider extends AutoDisposeNotifierProviderImpl<
     EnvironmentFormRequest, EnvironmentRequest> {
   /// See also [EnvironmentFormRequest].
   EnvironmentFormRequestProvider(
-    this.item,
-  ) : super.internal(
+    Environment? item,
+  ) : this._internal(
           () => EnvironmentFormRequest()..item = item,
           from: environmentFormRequestProvider,
           name: r'environmentFormRequestProvider',
@@ -129,9 +129,51 @@ class EnvironmentFormRequestProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: EnvironmentFormRequestFamily._dependencies,
           allTransitiveDependencies:
               EnvironmentFormRequestFamily._allTransitiveDependencies,
+          item: item,
         );
 
+  EnvironmentFormRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.item,
+  }) : super.internal();
+
   final Environment? item;
+
+  @override
+  EnvironmentRequest runNotifierBuild(
+    covariant EnvironmentFormRequest notifier,
+  ) {
+    return notifier.build(
+      item,
+    );
+  }
+
+  @override
+  Override overrideWith(EnvironmentFormRequest Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: EnvironmentFormRequestProvider._internal(
+        () => create()..item = item,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        item: item,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<EnvironmentFormRequest, EnvironmentRequest>
+      createElement() {
+    return _EnvironmentFormRequestProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -145,15 +187,21 @@ class EnvironmentFormRequestProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin EnvironmentFormRequestRef
+    on AutoDisposeNotifierProviderRef<EnvironmentRequest> {
+  /// The parameter `item` of this provider.
+  Environment? get item;
+}
+
+class _EnvironmentFormRequestProviderElement
+    extends AutoDisposeNotifierProviderElement<EnvironmentFormRequest,
+        EnvironmentRequest> with EnvironmentFormRequestRef {
+  _EnvironmentFormRequestProviderElement(super.provider);
 
   @override
-  EnvironmentRequest runNotifierBuild(
-    covariant EnvironmentFormRequest notifier,
-  ) {
-    return notifier.build(
-      item,
-    );
-  }
+  Environment? get item => (origin as EnvironmentFormRequestProvider).item;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

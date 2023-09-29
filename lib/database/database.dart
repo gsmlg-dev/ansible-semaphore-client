@@ -14,6 +14,7 @@ class Database {
 
   static Future<void> initialize() async {
     final dir = await getApplicationSupportDirectory();
+    print(dir.path);
     final isar = await Isar.open(
       name: 'GSMLG.app',
       allSchema,

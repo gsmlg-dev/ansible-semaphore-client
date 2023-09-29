@@ -9,6 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:semaphore/adaptive/alert_dialog.dart';
 import 'package:semaphore/adaptive/button.dart';
 import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/inventory/form.dart';
 import 'package:semaphore/state/api_config.dart';
@@ -66,7 +67,7 @@ class InventoryDataTable extends BaseGridData<Inventory> {
                         child: InventoryForm(inventoryId: inventory.id),
                       );
                     },
-                    iconData: (Icons.edit)),
+                    icon: const AdaptiveIcon(Icons.edit)),
                 AdaptiveIconButton(
                     onPressed: () {
                       adaptiveAlertDialog(
@@ -80,6 +81,7 @@ class InventoryDataTable extends BaseGridData<Inventory> {
                             },
                             child: const Text('Cancel')),
                         primaryButton: AdaptiveButton(
+                            color: Colors.redAccent,
                             onPressed: () async {
                               final api = ref
                                   .read(semaphoreApiProvider)
@@ -97,11 +99,10 @@ class InventoryDataTable extends BaseGridData<Inventory> {
                                   .read(inventoryListProvider.notifier)
                                   .loadRows();
                             },
-                            child: const Text('Delete',
-                                style: TextStyle(color: Colors.red))),
+                            child: const Text('Delete')),
                       );
                     },
-                    iconData: (Icons.delete)),
+                    icon: const AdaptiveIcon(Icons.delete)),
               ],
             );
           });

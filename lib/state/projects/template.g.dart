@@ -43,8 +43,6 @@ class _SystemHash {
   }
 }
 
-typedef TemplateFamilyRef = AutoDisposeFutureProviderRef<Template>;
-
 /// See also [templateFamily].
 @ProviderFor(templateFamily)
 const templateFamilyProvider = TemplateFamilyFamily();
@@ -91,10 +89,10 @@ class TemplateFamilyFamily extends Family<AsyncValue<Template>> {
 class TemplateFamilyProvider extends AutoDisposeFutureProvider<Template> {
   /// See also [templateFamily].
   TemplateFamilyProvider(
-    this.id,
-  ) : super.internal(
+    int? id,
+  ) : this._internal(
           (ref) => templateFamily(
-            ref,
+            ref as TemplateFamilyRef,
             id,
           ),
           from: templateFamilyProvider,
@@ -106,9 +104,43 @@ class TemplateFamilyProvider extends AutoDisposeFutureProvider<Template> {
           dependencies: TemplateFamilyFamily._dependencies,
           allTransitiveDependencies:
               TemplateFamilyFamily._allTransitiveDependencies,
+          id: id,
         );
 
+  TemplateFamilyProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
   final int? id;
+
+  @override
+  Override overrideWith(
+    FutureOr<Template> Function(TemplateFamilyRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TemplateFamilyProvider._internal(
+        (ref) => create(ref as TemplateFamilyRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Template> createElement() {
+    return _TemplateFamilyProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -122,6 +154,19 @@ class TemplateFamilyProvider extends AutoDisposeFutureProvider<Template> {
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin TemplateFamilyRef on AutoDisposeFutureProviderRef<Template> {
+  /// The parameter `id` of this provider.
+  int? get id;
+}
+
+class _TemplateFamilyProviderElement
+    extends AutoDisposeFutureProviderElement<Template> with TemplateFamilyRef {
+  _TemplateFamilyProviderElement(super.provider);
+
+  @override
+  int? get id => (origin as TemplateFamilyProvider).id;
 }
 
 String _$templateListHash() => r'edc7e91c66568c16052ec3e6a5ba31ed917548a2';
@@ -140,4 +185,4 @@ final templateListProvider =
 
 typedef _$TemplateList = AutoDisposeNotifier<TemplateDataTable>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

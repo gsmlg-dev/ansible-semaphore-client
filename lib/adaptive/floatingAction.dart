@@ -28,6 +28,7 @@ class AdaptiveFloatingAction {
 
   Widget floatingActionButton() {
     return NeumorphicFloatingActionButton(
+      tooltip: label,
       onPressed: onPressed,
       child: icon,
     );

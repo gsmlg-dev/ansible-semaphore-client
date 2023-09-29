@@ -73,7 +73,7 @@ AppActivities _appActivitiesDeserialize(
   object.id = id;
   object.state =
       _AppActivitiesstateValueEnumMap[reader.readByteOrNull(offsets[1])] ??
-          ActiveState.active;
+          AppLifecycleState.detached;
   return object;
 }
 
@@ -88,23 +88,25 @@ P _appActivitiesDeserializeProp<P>(
       return (reader.readDateTime(offset)) as P;
     case 1:
       return (_AppActivitiesstateValueEnumMap[reader.readByteOrNull(offset)] ??
-          ActiveState.active) as P;
+          AppLifecycleState.detached) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
 const _AppActivitiesstateEnumValueMap = {
-  'active': 0,
-  'deactive': 1,
-  'pause': 2,
-  'resume': 3,
+  'detached': 0,
+  'resumed': 1,
+  'inactive': 2,
+  'hidden': 3,
+  'paused': 4,
 };
 const _AppActivitiesstateValueEnumMap = {
-  0: ActiveState.active,
-  1: ActiveState.deactive,
-  2: ActiveState.pause,
-  3: ActiveState.resume,
+  0: AppLifecycleState.detached,
+  1: AppLifecycleState.resumed,
+  2: AppLifecycleState.inactive,
+  3: AppLifecycleState.hidden,
+  4: AppLifecycleState.paused,
 };
 
 Id _appActivitiesGetId(AppActivities object) {
@@ -314,7 +316,7 @@ extension AppActivitiesQueryFilter
   }
 
   QueryBuilder<AppActivities, AppActivities, QAfterFilterCondition>
-      stateEqualTo(ActiveState value) {
+      stateEqualTo(AppLifecycleState value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'state',
@@ -325,7 +327,7 @@ extension AppActivitiesQueryFilter
 
   QueryBuilder<AppActivities, AppActivities, QAfterFilterCondition>
       stateGreaterThan(
-    ActiveState value, {
+    AppLifecycleState value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -339,7 +341,7 @@ extension AppActivitiesQueryFilter
 
   QueryBuilder<AppActivities, AppActivities, QAfterFilterCondition>
       stateLessThan(
-    ActiveState value, {
+    AppLifecycleState value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -353,8 +355,8 @@ extension AppActivitiesQueryFilter
 
   QueryBuilder<AppActivities, AppActivities, QAfterFilterCondition>
       stateBetween(
-    ActiveState lower,
-    ActiveState upper, {
+    AppLifecycleState lower,
+    AppLifecycleState upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -473,7 +475,8 @@ extension AppActivitiesQueryProperty
     });
   }
 
-  QueryBuilder<AppActivities, ActiveState, QQueryOperations> stateProperty() {
+  QueryBuilder<AppActivities, AppLifecycleState, QQueryOperations>
+      stateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'state');
     });

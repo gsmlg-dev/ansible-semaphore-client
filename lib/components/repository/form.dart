@@ -7,6 +7,7 @@ import 'package:macos_ui/macos_ui.dart';
 import 'package:material_neumorphic/material_neumorphic.dart';
 import 'package:semaphore/adaptive/button.dart';
 import 'package:semaphore/adaptive/dropdown.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/adaptive/text_field.dart';
 import 'package:semaphore/state/projects/access_key.dart';
@@ -96,7 +97,7 @@ class RepositoryForm extends ConsumerWidget {
                               suffixIcon: formData.sshKeyId == null
                                   ? null
                                   : AdaptiveIconButton(
-                                      iconData: (Icons.clear),
+                                      icon: const AdaptiveIcon(Icons.clear),
                                       onPressed: () {
                                         ref
                                             .read(repositoryFormRequestProvider(

@@ -26,7 +26,10 @@ class AdaptiveDropdownMenu<T> extends StatelessWidget {
         children: [
           decoration?.labelText != null
               ? Text(decoration!.labelText!, style: theme.typography.headline)
-              : Container(),
+              : const SizedBox(),
+          decoration?.labelText != null
+              ? const SizedBox(height: 12.0)
+              : const SizedBox(),
           MacosPopupButton<T?>(
             key: key,
             value: value,

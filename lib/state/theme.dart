@@ -17,8 +17,6 @@ extension ThemeModeExtension on ThemeMode {
         return 'Light';
       case ThemeMode.dark:
         return 'Dark';
-      default:
-        return '';
     }
   }
 
@@ -30,8 +28,17 @@ extension ThemeModeExtension on ThemeMode {
         return const Icon(Icons.light_mode_sharp);
       case ThemeMode.dark:
         return const Icon(Icons.dark_mode_sharp);
-      default:
-        return const SizedBox();
+    }
+  }
+
+  IconData get iconData {
+    switch (this) {
+      case ThemeMode.system:
+        return Icons.brightness_auto_sharp;
+      case ThemeMode.light:
+        return Icons.light_mode_sharp;
+      case ThemeMode.dark:
+        return Icons.dark_mode_sharp;
     }
   }
 }

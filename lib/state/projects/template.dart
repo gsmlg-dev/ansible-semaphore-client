@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/environment_name.dart';
 import 'package:semaphore/components/inventory_name.dart';
@@ -85,7 +86,7 @@ class TemplateDataTable extends BaseGridData<Template> {
                   .read(templateTaskListProvider(templateId: value.id).notifier)
                   .prepareRunTask(context);
             },
-            iconData: (Icons.play_arrow),
+            icon: const AdaptiveIcon(Icons.play_arrow),
           );
         });
       },

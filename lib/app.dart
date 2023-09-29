@@ -3,6 +3,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:semaphore/constants.dart';
+import 'package:semaphore/database/database.dart';
+import 'package:semaphore/database/schema/app_activities.dart';
 import 'package:semaphore/router/router.dart';
 import 'package:semaphore/state/theme.dart';
 import 'package:semaphore/adaptive/app.dart';
@@ -16,17 +18,36 @@ class App extends ConsumerStatefulWidget {
   ConsumerState<App> createState() => _AppState();
 }
 
-class _AppState extends ConsumerState<App> {
+class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   @override
   initState() {
     super.initState();
+    ref
+        .read(localAppThemeDataProvider.notifier)
+        .saveSeedColor(SystemTheme.accentColor.accent);
     if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
       initSystemTray();
+    }
+    WidgetsBinding.instance.addObserver(this);
+    if (WidgetsBinding.instance.lifecycleState != null) {
+      print(WidgetsBinding.instance.lifecycleState!);
     }
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    final appActivity = AppActivities()
+      ..state = state
+      ..createdAt = DateTime.now();
+
+    await Database().instance.writeTxn(() async {
+      await Database().instance.appActivities.put(appActivity);
+    });
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -69,15 +90,14 @@ class _AppState extends ConsumerState<App> {
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(themeModeProvider);
-    final appThemeData = ref.watch(localAppThemeDataProvider);
     final accentColor = SystemTheme.accentColor.accent;
 
     return AdaptiveApp.router(
+      accentColor: accentColor,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
       title: Constants.appName,
-      // themeMode: ThemeMode.system,
-      appThemeData: appThemeData,
+      themeMode: themeMode,
     );
   }
 }

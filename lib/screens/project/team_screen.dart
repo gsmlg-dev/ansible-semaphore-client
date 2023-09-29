@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_neumorphic/material_neumorphic.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:semaphore/adaptive/dialog.dart';
 import 'package:semaphore/adaptive/floatingAction.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/scaffold.dart';
 import 'package:semaphore/components/app_bar.dart';
 import 'package:semaphore/components/app_drawer.dart';
+import 'package:semaphore/components/user/form.dart';
 import 'package:semaphore/state/projects/user.dart';
 
 class TeamScreen extends ConsumerWidget {
@@ -24,8 +27,10 @@ class TeamScreen extends ConsumerWidget {
       drawer: const LocalDrawer(),
       appBar: const LocalAppBar(title: 'Team'),
       floatingAction: AdaptiveFloatingAction(
-        icon: const Icon(Icons.add),
-        onPressed: () {},
+        icon: const AdaptiveIcon(Icons.add),
+        onPressed: () {
+          adaptiveDialog(context: context, child: const ProjectUserForm());
+        },
       ),
       body: SafeArea(
         child: PlutoGrid(

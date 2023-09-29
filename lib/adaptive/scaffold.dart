@@ -30,17 +30,31 @@ class AdaptiveScaffold extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (Platform.isMacOS) {
       final toolbarAction = floatingAction?.toolBarIconButton();
+      final dynamic extraActions = appBar?.actions ?? [];
+      final toolbarExtraActions = extraActions
+          .map<ToolbarItem>((a) => ToolBarIconButton(
+                icon: a.icon ?? const SizedBox(),
+                onPressed: a.onPressed,
+                showLabel: a.showLabel ?? false,
+                label: a.label,
+              ))
+          .toList();
       return MacosWindow(
           titleBar: appBar?.title != null
               ? TitleBar(title: Text(appBar!.title))
               : null,
-          sidebar: buildSidebar(context),
+          sidebar: drawer != null ? buildSidebar(context) : null,
           child: MacosScaffold(
             backgroundColor: const Color.fromRGBO(0xff, 0xff, 0xff, 0),
-            toolBar: toolbarAction != null
-                ? ToolBar(actions: [
-                    toolbarAction,
-                  ])
+            toolBar: toolbarAction != null || appBar?.leading != null
+                ? ToolBar(
+                    leading: appBar?.leading,
+                    actions: toolbarAction != null
+                        ? [
+                            toolbarAction,
+                            ...toolbarExtraActions,
+                          ]
+                        : toolbarExtraActions)
                 : null,
             children: [
               ContentArea(builder: (context, scrollController) {

@@ -4,16 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:material_neumorphic/material_neumorphic.dart'
-    show NeumorphicButton;
+    show NeumorphicButton, NeumorphicTheme;
 
 class AdaptiveButton extends StatelessWidget {
   final Function()? onPressed;
   final Widget child;
   final ControlSize controlSize;
+  final Color? color;
 
   const AdaptiveButton({
     super.key,
     this.onPressed,
+    this.color,
     this.child = const SizedBox(),
     this.controlSize = ControlSize.regular,
   });
@@ -21,10 +23,17 @@ class AdaptiveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isMacOS) {
+      // final macosTheme = MacosTheme.of(context);
       return PushButton(
-          controlSize: controlSize, onPressed: onPressed, child: child);
+          color: color,
+          controlSize: controlSize,
+          onPressed: onPressed,
+          child: child);
     }
+    final theme = Theme.of(context);
+    final neumorphicTheme = theme.extension<NeumorphicTheme>()!;
     return NeumorphicButton(
+      style: neumorphicTheme.styleWith(color: color),
       onPressed: onPressed,
       child: child,
     );

@@ -116,8 +116,8 @@ class AccessKeyFormRequestProvider extends AutoDisposeNotifierProviderImpl<
     AccessKeyFormRequest, AccessKeyRequest> {
   /// See also [AccessKeyFormRequest].
   AccessKeyFormRequestProvider(
-    this.item,
-  ) : super.internal(
+    AccessKey? item,
+  ) : this._internal(
           () => AccessKeyFormRequest()..item = item,
           from: accessKeyFormRequestProvider,
           name: r'accessKeyFormRequestProvider',
@@ -128,9 +128,51 @@ class AccessKeyFormRequestProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: AccessKeyFormRequestFamily._dependencies,
           allTransitiveDependencies:
               AccessKeyFormRequestFamily._allTransitiveDependencies,
+          item: item,
         );
 
+  AccessKeyFormRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.item,
+  }) : super.internal();
+
   final AccessKey? item;
+
+  @override
+  AccessKeyRequest runNotifierBuild(
+    covariant AccessKeyFormRequest notifier,
+  ) {
+    return notifier.build(
+      item,
+    );
+  }
+
+  @override
+  Override overrideWith(AccessKeyFormRequest Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: AccessKeyFormRequestProvider._internal(
+        () => create()..item = item,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        item: item,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<AccessKeyFormRequest, AccessKeyRequest>
+      createElement() {
+    return _AccessKeyFormRequestProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -144,15 +186,21 @@ class AccessKeyFormRequestProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin AccessKeyFormRequestRef
+    on AutoDisposeNotifierProviderRef<AccessKeyRequest> {
+  /// The parameter `item` of this provider.
+  AccessKey? get item;
+}
+
+class _AccessKeyFormRequestProviderElement
+    extends AutoDisposeNotifierProviderElement<AccessKeyFormRequest,
+        AccessKeyRequest> with AccessKeyFormRequestRef {
+  _AccessKeyFormRequestProviderElement(super.provider);
 
   @override
-  AccessKeyRequest runNotifierBuild(
-    covariant AccessKeyFormRequest notifier,
-  ) {
-    return notifier.build(
-      item,
-    );
-  }
+  AccessKey? get item => (origin as AccessKeyFormRequestProvider).item;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

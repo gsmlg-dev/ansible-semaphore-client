@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/screens/profile/profile_screen.dart';
 import 'package:semaphore/screens/project/environment_screen.dart';
-import 'package:semaphore/screens/project/history_screen.dart';
+import 'package:semaphore/screens/project/dashboard_screen.dart';
 import 'package:semaphore/screens/project/inventory_screen.dart';
 import 'package:semaphore/screens/project/keystore_screen.dart';
 import 'package:semaphore/screens/project/repository_screen.dart';
 import 'package:semaphore/screens/project/team_screen.dart';
 import 'package:semaphore/screens/project/template_screen.dart';
 import 'package:semaphore/screens/project/template_task_screen.dart';
+import 'package:semaphore/screens/setting/setting_screen.dart';
 
 import 'package:semaphore/screens/splash/splash_screen.dart';
-import 'package:semaphore/screens/sign_in/sign_in_screen.dart';
 import 'package:semaphore/screens/home/home_screen.dart';
-import 'package:semaphore/screens/url_config/url_config_screen.dart';
 
 part 'router_notifier.g.dart';
 
@@ -36,7 +36,7 @@ class RouterNotifier extends _$RouterNotifier implements Listenable {
     final isSplash = state.path == SplashScreen.path;
 
     if (isSplash) {
-      return isAuth ? HomeScreen.path : SignInScreen.path;
+      // return isAuth ? HomeScreen.path : SettingsScreen.path;
     }
     return null;
   }
@@ -53,25 +53,36 @@ class RouterNotifier extends _$RouterNotifier implements Listenable {
           },
         ),
         GoRoute(
-          name: UrlConfigScreen.name,
-          path: UrlConfigScreen.path,
+          name: SettingsScreen.name,
+          path: SettingsScreen.path,
           pageBuilder: (context, state) {
+            final name = state.pathParameters['module'];
+            final module = SettingsScreenModule.values.firstWhere(
+                (m) => m.name == name,
+                orElse: () => SettingsScreenModule.values.first);
+
             return MaterialPage<void>(
               key: state.pageKey,
-              child: const UrlConfigScreen(),
+              child: SettingsScreen(module: module),
             );
           },
+          redirect: (context, state) => isAuth ? SettingsScreen.path : null,
         ),
         GoRoute(
-          name: SignInScreen.name,
-          path: SignInScreen.path,
+          name: ProfileScreen.name,
+          path: ProfileScreen.path,
           pageBuilder: (context, state) {
+            final name = state.pathParameters['module'];
+            final module = ProfileScreenModule.values.firstWhere(
+                (m) => m.name == name,
+                orElse: () => ProfileScreenModule.values.first);
+
             return MaterialPage<void>(
               key: state.pageKey,
-              child: const SignInScreen(),
+              child: ProfileScreen(module: module),
             );
           },
-          redirect: (context, state) => isAuth ? HomeScreen.path : null,
+          redirect: (context, state) => isAuth ? ProfileScreen.path : null,
         ),
         GoRoute(
             name: HomeScreen.name,
@@ -84,12 +95,12 @@ class RouterNotifier extends _$RouterNotifier implements Listenable {
             },
             routes: const []),
         GoRoute(
-            name: HistoryScreen.name,
-            path: HistoryScreen.path,
+            name: DashboardScreen.name,
+            path: DashboardScreen.path,
             pageBuilder: (context, state) {
               return NoTransitionPage<void>(
                 key: state.pageKey,
-                child: const HistoryScreen(),
+                child: const DashboardScreen(),
               );
             },
             routes: const []),

@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:semaphore/adaptive/button.dart';
 import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/environment/form.dart';
 import 'package:semaphore/state/api_config.dart';
@@ -39,7 +40,7 @@ class EnvironmentDataTable extends BaseGridData<Environment> {
                     child: EnvironmentForm(environmentId: environment.id),
                   );
                 },
-                iconData: Icons.edit,
+                icon: const AdaptiveIcon(Icons.edit),
               ),
               AdaptiveIconButton(
                   onPressed: () {
@@ -55,7 +56,7 @@ class EnvironmentDataTable extends BaseGridData<Environment> {
                           },
                           child: const Text('Cancel')),
                       primaryButton: AdaptiveButton(
-                          controlSize: ControlSize.large,
+                          color: Colors.redAccent,
                           onPressed: () async {
                             final api =
                                 ref.read(semaphoreApiProvider).getProjectApi();
@@ -72,11 +73,10 @@ class EnvironmentDataTable extends BaseGridData<Environment> {
                                 .read(environmentListProvider.notifier)
                                 .loadRows();
                           },
-                          child: const Text('Delete',
-                              style: TextStyle(color: Colors.red))),
+                          child: const Text('Delete')),
                     );
                   },
-                  iconData: Icons.delete),
+                  icon: const AdaptiveIcon(Icons.delete)),
             ],
           );
         });

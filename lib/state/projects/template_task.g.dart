@@ -6,7 +6,7 @@ part of 'template_task.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$templateTaskListHash() => r'8a36e0ae050032f59129fd04b5fce194e371173e';
+String _$templateTaskListHash() => r'add98a026a82813f8f0e2073a1483667a0872d1e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -85,8 +85,8 @@ class TemplateTaskListProvider extends AutoDisposeNotifierProviderImpl<
     TemplateTaskList, TemplateTaskDataTable> {
   /// See also [TemplateTaskList].
   TemplateTaskListProvider({
-    required this.templateId,
-  }) : super.internal(
+    required int templateId,
+  }) : this._internal(
           () => TemplateTaskList()..templateId = templateId,
           from: templateTaskListProvider,
           name: r'templateTaskListProvider',
@@ -97,9 +97,51 @@ class TemplateTaskListProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: TemplateTaskListFamily._dependencies,
           allTransitiveDependencies:
               TemplateTaskListFamily._allTransitiveDependencies,
+          templateId: templateId,
         );
 
+  TemplateTaskListProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.templateId,
+  }) : super.internal();
+
   final int templateId;
+
+  @override
+  TemplateTaskDataTable runNotifierBuild(
+    covariant TemplateTaskList notifier,
+  ) {
+    return notifier.build(
+      templateId: templateId,
+    );
+  }
+
+  @override
+  Override overrideWith(TemplateTaskList Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: TemplateTaskListProvider._internal(
+        () => create()..templateId = templateId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        templateId: templateId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<TemplateTaskList, TemplateTaskDataTable>
+      createElement() {
+    return _TemplateTaskListProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -113,15 +155,21 @@ class TemplateTaskListProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin TemplateTaskListRef
+    on AutoDisposeNotifierProviderRef<TemplateTaskDataTable> {
+  /// The parameter `templateId` of this provider.
+  int get templateId;
+}
+
+class _TemplateTaskListProviderElement
+    extends AutoDisposeNotifierProviderElement<TemplateTaskList,
+        TemplateTaskDataTable> with TemplateTaskListRef {
+  _TemplateTaskListProviderElement(super.provider);
 
   @override
-  TemplateTaskDataTable runNotifierBuild(
-    covariant TemplateTaskList notifier,
-  ) {
-    return notifier.build(
-      templateId: templateId,
-    );
-  }
+  int get templateId => (origin as TemplateTaskListProvider).templateId;
 }
 
 String _$runTaskFormDataHash() => r'298b708569ffc49b6b201c838063be7a135ea0e6';
@@ -141,4 +189,4 @@ final runTaskFormDataProvider =
 
 typedef _$RunTaskFormData = AutoDisposeNotifier<RunTaskFormState>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

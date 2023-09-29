@@ -1,63 +1,34 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'shared_prefs.dart';
-import 'auth.dart';
+import 'package:semaphore/state/server.dart';
 
 part 'api_config.g.dart';
-
-@riverpod
-class ApiUrl extends _$ApiUrl {
-  static const apiUrlSaveKey = 'semaphore.url';
-  @override
-  String build() {
-    ref.keepAlive();
-    return '';
-  }
-
-  void changeApiUrl(String url) {
-    state = url;
-    persistentUrlConfig(url);
-  }
-
-  void persistentUrlConfig(String url) async {
-    final prefs = await ref.read(sharedPrefsProvider.future);
-    prefs.setString(apiUrlSaveKey, url);
-  }
-
-  Future<String> loadApiUrl() async {
-    final prefs = await ref.read(sharedPrefsProvider.future);
-    final url = prefs.getString(apiUrlSaveKey) ?? '';
-    state = url;
-    return url;
-  }
-}
 
 @riverpod
 class SemaphoreApi extends _$SemaphoreApi {
   @override
   AnsibleSemaphore build() {
-    final apiUrl = ref.read(apiUrlProvider);
-    final token = ref.read(userTokenProvider);
-    ref.keepAlive();
+    final currentServer = ref.watch(serversProvider.notifier).currentServer();
+    if (currentServer == null) {
+      return AnsibleSemaphore();
+    }
+    final apiUrl = currentServer.apiUrl;
+    final token = currentServer.token;
     if (token != null &&
         token.isNotEmpty &&
+        apiUrl != null &&
         Uri.parse(apiUrl).host.isNotEmpty) {
       return AnsibleSemaphore(
         dio: Dio(BaseOptions(
             baseUrl: apiUrl, headers: {'Authorization': 'Bearer $token'})),
       );
-    } else if (Uri.parse(apiUrl).host.isNotEmpty) {
+    } else if (apiUrl != null && Uri.parse(apiUrl).host.isNotEmpty) {
       return AnsibleSemaphore(
         basePathOverride: apiUrl,
       );
     } else {
       return AnsibleSemaphore();
     }
-  }
-
-  void rebuild() {
-    state = build();
   }
 }

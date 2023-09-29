@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef TaskFamilyRef = AutoDisposeFutureProviderRef<Task>;
-
 /// See also [taskFamily].
 @ProviderFor(taskFamily)
 const taskFamilyProvider = TaskFamilyFamily();
@@ -77,10 +75,10 @@ class TaskFamilyFamily extends Family<AsyncValue<Task>> {
 class TaskFamilyProvider extends AutoDisposeFutureProvider<Task> {
   /// See also [taskFamily].
   TaskFamilyProvider(
-    this.id,
-  ) : super.internal(
+    int id,
+  ) : this._internal(
           (ref) => taskFamily(
-            ref,
+            ref as TaskFamilyRef,
             id,
           ),
           from: taskFamilyProvider,
@@ -92,9 +90,43 @@ class TaskFamilyProvider extends AutoDisposeFutureProvider<Task> {
           dependencies: TaskFamilyFamily._dependencies,
           allTransitiveDependencies:
               TaskFamilyFamily._allTransitiveDependencies,
+          id: id,
         );
 
+  TaskFamilyProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
   final int id;
+
+  @override
+  Override overrideWith(
+    FutureOr<Task> Function(TaskFamilyRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TaskFamilyProvider._internal(
+        (ref) => create(ref as TaskFamilyRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Task> createElement() {
+    return _TaskFamilyProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -110,8 +142,20 @@ class TaskFamilyProvider extends AutoDisposeFutureProvider<Task> {
   }
 }
 
+mixin TaskFamilyRef on AutoDisposeFutureProviderRef<Task> {
+  /// The parameter `id` of this provider.
+  int get id;
+}
+
+class _TaskFamilyProviderElement extends AutoDisposeFutureProviderElement<Task>
+    with TaskFamilyRef {
+  _TaskFamilyProviderElement(super.provider);
+
+  @override
+  int get id => (origin as TaskFamilyProvider).id;
+}
+
 String _$taskOutputHash() => r'941cc24b5817823d370bc488d41106103efcc45d';
-typedef TaskOutputRef = AutoDisposeFutureProviderRef<List<TaskOutput>>;
 
 /// See also [taskOutput].
 @ProviderFor(taskOutput)
@@ -159,10 +203,10 @@ class TaskOutputFamily extends Family<AsyncValue<List<TaskOutput>>> {
 class TaskOutputProvider extends AutoDisposeFutureProvider<List<TaskOutput>> {
   /// See also [taskOutput].
   TaskOutputProvider(
-    this.id,
-  ) : super.internal(
+    int id,
+  ) : this._internal(
           (ref) => taskOutput(
-            ref,
+            ref as TaskOutputRef,
             id,
           ),
           from: taskOutputProvider,
@@ -174,9 +218,43 @@ class TaskOutputProvider extends AutoDisposeFutureProvider<List<TaskOutput>> {
           dependencies: TaskOutputFamily._dependencies,
           allTransitiveDependencies:
               TaskOutputFamily._allTransitiveDependencies,
+          id: id,
         );
 
+  TaskOutputProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
   final int id;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<TaskOutput>> Function(TaskOutputRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TaskOutputProvider._internal(
+        (ref) => create(ref as TaskOutputRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<TaskOutput>> createElement() {
+    return _TaskOutputProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -192,15 +270,29 @@ class TaskOutputProvider extends AutoDisposeFutureProvider<List<TaskOutput>> {
   }
 }
 
-String _$taskOutputStreamHash() => r'ad50955a6d358fefb5877a09754050c445cad475';
-typedef TaskOutputStreamRef = AutoDisposeStreamProviderRef<List<TaskOutput>>;
+mixin TaskOutputRef on AutoDisposeFutureProviderRef<List<TaskOutput>> {
+  /// The parameter `id` of this provider.
+  int get id;
+}
+
+class _TaskOutputProviderElement
+    extends AutoDisposeFutureProviderElement<List<TaskOutput>>
+    with TaskOutputRef {
+  _TaskOutputProviderElement(super.provider);
+
+  @override
+  int get id => (origin as TaskOutputProvider).id;
+}
+
+String _$taskOutputStreamHash() => r'bbdffab0b83bbd4824ad3cbca5d2e16bf3343c18';
 
 /// See also [taskOutputStream].
 @ProviderFor(taskOutputStream)
 const taskOutputStreamProvider = TaskOutputStreamFamily();
 
 /// See also [taskOutputStream].
-class TaskOutputStreamFamily extends Family<AsyncValue<List<TaskOutput>>> {
+class TaskOutputStreamFamily
+    extends Family<AsyncValue<(Task, List<TaskOutput>)>> {
   /// See also [taskOutputStream].
   const TaskOutputStreamFamily();
 
@@ -239,13 +331,13 @@ class TaskOutputStreamFamily extends Family<AsyncValue<List<TaskOutput>>> {
 
 /// See also [taskOutputStream].
 class TaskOutputStreamProvider
-    extends AutoDisposeStreamProvider<List<TaskOutput>> {
+    extends AutoDisposeStreamProvider<(Task, List<TaskOutput>)> {
   /// See also [taskOutputStream].
   TaskOutputStreamProvider(
-    this.taskId,
-  ) : super.internal(
+    int taskId,
+  ) : this._internal(
           (ref) => taskOutputStream(
-            ref,
+            ref as TaskOutputStreamRef,
             taskId,
           ),
           from: taskOutputStreamProvider,
@@ -257,9 +349,44 @@ class TaskOutputStreamProvider
           dependencies: TaskOutputStreamFamily._dependencies,
           allTransitiveDependencies:
               TaskOutputStreamFamily._allTransitiveDependencies,
+          taskId: taskId,
         );
 
+  TaskOutputStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.taskId,
+  }) : super.internal();
+
   final int taskId;
+
+  @override
+  Override overrideWith(
+    Stream<(Task, List<TaskOutput>)> Function(TaskOutputStreamRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TaskOutputStreamProvider._internal(
+        (ref) => create(ref as TaskOutputStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        taskId: taskId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<(Task, List<TaskOutput>)> createElement() {
+    return _TaskOutputStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -275,7 +402,22 @@ class TaskOutputStreamProvider
   }
 }
 
-String _$taskListHash() => r'117a7f642010f111b30261e917874e02a8f4c3a7';
+mixin TaskOutputStreamRef
+    on AutoDisposeStreamProviderRef<(Task, List<TaskOutput>)> {
+  /// The parameter `taskId` of this provider.
+  int get taskId;
+}
+
+class _TaskOutputStreamProviderElement
+    extends AutoDisposeStreamProviderElement<(Task, List<TaskOutput>)>
+    with TaskOutputStreamRef {
+  _TaskOutputStreamProviderElement(super.provider);
+
+  @override
+  int get taskId => (origin as TaskOutputStreamProvider).taskId;
+}
+
+String _$taskListHash() => r'c953051e136b9c07dbae4ad7ae793949f2220095';
 
 /// See also [TaskList].
 @ProviderFor(TaskList)
@@ -291,4 +433,4 @@ final taskListProvider =
 
 typedef _$TaskList = AutoDisposeNotifier<TaskDataTable>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

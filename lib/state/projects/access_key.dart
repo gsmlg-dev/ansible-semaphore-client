@@ -1,5 +1,4 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -8,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:semaphore/adaptive/alert_dialog.dart';
 import 'package:semaphore/adaptive/button.dart';
 import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/access_key/form.dart';
 import 'package:semaphore/state/api_config.dart';
@@ -44,7 +44,7 @@ class AccessKeyDataTable extends BaseGridData<AccessKey> {
                         context: context,
                         child: AccessKeyForm(accessKeyId: accessKey.id));
                   },
-                  iconData: (Icons.edit)),
+                  icon: const AdaptiveIcon(Icons.edit)),
               AdaptiveIconButton(
                   onPressed: () {
                     adaptiveAlertDialog(
@@ -53,7 +53,7 @@ class AccessKeyDataTable extends BaseGridData<AccessKey> {
                       content: const Text(
                           'Are you sure you want to delete this accessKey?'),
                       primaryButton: AdaptiveButton(
-                          controlSize: ControlSize.large,
+                          color: Colors.redAccent,
                           onPressed: () async {
                             final api =
                                 ref.read(semaphoreApiProvider).getProjectApi();
@@ -66,10 +66,8 @@ class AccessKeyDataTable extends BaseGridData<AccessKey> {
                             }
                             ref.read(accessKeyListProvider.notifier).loadRows();
                           },
-                          child: const Text('Delete',
-                              style: TextStyle(color: Colors.red))),
+                          child: const Text('Delete')),
                       secondaryButton: AdaptiveButton(
-                        controlSize: ControlSize.large,
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -77,7 +75,7 @@ class AccessKeyDataTable extends BaseGridData<AccessKey> {
                       ),
                     );
                   },
-                  iconData: (Icons.delete)),
+                  icon: const AdaptiveIcon(Icons.delete)),
             ],
           );
         });

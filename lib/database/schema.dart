@@ -1,4 +1,8 @@
 import 'package:isar/isar.dart' show CollectionSchema;
-import 'schema/app_activities.dart';
+import 'package:semaphore/database/schema/semaphore_server.dart';
+import 'package:semaphore/database/schema/app_activities.dart';
 
-const List<CollectionSchema> allSchema = [AppActivitiesSchema];
+const List<CollectionSchema> allSchema = [
+  AppActivitiesSchema,
+  SemaphoreServerSchema
+];

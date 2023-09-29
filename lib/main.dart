@@ -7,10 +7,11 @@ import 'package:macos_ui/macos_ui.dart' show MacosWindowUtilsConfig;
 import 'package:semaphore/utils/state_logger.dart';
 import 'package:semaphore/app.dart';
 import 'package:system_theme/system_theme.dart';
-// import 'package:semaphore/database/database.dart';
+import 'package:semaphore/database/database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemTheme.fallbackColor = const Color(0xFF005057);
   await SystemTheme.accentColor.load();
 
   if (!kIsWeb) {
@@ -20,8 +21,8 @@ void main() async {
     }
   }
 
-  // await Database.initialize();
-  // await Database.performMigrationIfNeeded();
+  await Database.initialize();
+  await Database.performMigrationIfNeeded();
 
   runApp(
     const ProviderScope(observers: [StateLogger()], child: App()),

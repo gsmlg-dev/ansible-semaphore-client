@@ -116,8 +116,8 @@ class RepositoryFormRequestProvider extends AutoDisposeNotifierProviderImpl<
     RepositoryFormRequest, RepositoryRequest> {
   /// See also [RepositoryFormRequest].
   RepositoryFormRequestProvider(
-    this.item,
-  ) : super.internal(
+    Repository? item,
+  ) : this._internal(
           () => RepositoryFormRequest()..item = item,
           from: repositoryFormRequestProvider,
           name: r'repositoryFormRequestProvider',
@@ -128,9 +128,51 @@ class RepositoryFormRequestProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: RepositoryFormRequestFamily._dependencies,
           allTransitiveDependencies:
               RepositoryFormRequestFamily._allTransitiveDependencies,
+          item: item,
         );
 
+  RepositoryFormRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.item,
+  }) : super.internal();
+
   final Repository? item;
+
+  @override
+  RepositoryRequest runNotifierBuild(
+    covariant RepositoryFormRequest notifier,
+  ) {
+    return notifier.build(
+      item,
+    );
+  }
+
+  @override
+  Override overrideWith(RepositoryFormRequest Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: RepositoryFormRequestProvider._internal(
+        () => create()..item = item,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        item: item,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<RepositoryFormRequest, RepositoryRequest>
+      createElement() {
+    return _RepositoryFormRequestProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -144,15 +186,21 @@ class RepositoryFormRequestProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin RepositoryFormRequestRef
+    on AutoDisposeNotifierProviderRef<RepositoryRequest> {
+  /// The parameter `item` of this provider.
+  Repository? get item;
+}
+
+class _RepositoryFormRequestProviderElement
+    extends AutoDisposeNotifierProviderElement<RepositoryFormRequest,
+        RepositoryRequest> with RepositoryFormRequestRef {
+  _RepositoryFormRequestProviderElement(super.provider);
 
   @override
-  RepositoryRequest runNotifierBuild(
-    covariant RepositoryFormRequest notifier,
-  ) {
-    return notifier.build(
-      item,
-    );
-  }
+  Repository? get item => (origin as RepositoryFormRequestProvider).item;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -44,6 +44,7 @@ abstract class BaseGridData<T> {
       rowColor: theme.colorScheme.secondaryContainer,
       oddRowColor: PlutoOptional(_darken(theme.colorScheme.secondaryContainer)),
       evenRowColor: PlutoOptional(theme.colorScheme.secondaryContainer),
+      activatedColor: _darken(theme.colorScheme.secondaryContainer, 0.125),
       borderColor: theme.colorScheme.tertiary,
       cellTextStyle: theme.textTheme.bodyMedium,
       columnTextStyle: theme.textTheme.titleMedium,

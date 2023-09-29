@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:semaphore/adaptive/alert_dialog.dart';
 import 'package:semaphore/adaptive/button.dart';
 import 'package:semaphore/adaptive/dialog.dart';
+import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/access_key_name.dart';
 import 'package:semaphore/components/repository/form.dart';
@@ -53,7 +54,7 @@ class RepositoryDataTable extends BaseGridData<Repository> {
                       child: RepositoryForm(repositoryId: repository.id),
                     );
                   },
-                  iconData: (Icons.edit)),
+                  icon: const AdaptiveIcon(Icons.edit)),
               AdaptiveIconButton(
                   onPressed: () {
                     adaptiveAlertDialog(
@@ -67,6 +68,7 @@ class RepositoryDataTable extends BaseGridData<Repository> {
                           },
                           child: const Text('Cancel')),
                       primaryButton: AdaptiveButton(
+                          color: Colors.redAccent,
                           onPressed: () async {
                             final api =
                                 ref.read(semaphoreApiProvider).getProjectApi();
@@ -83,11 +85,10 @@ class RepositoryDataTable extends BaseGridData<Repository> {
                                 .read(repositoryListProvider.notifier)
                                 .loadRows();
                           },
-                          child: const Text('Delete',
-                              style: TextStyle(color: Colors.red))),
+                          child: const Text('Delete')),
                     );
                   },
-                  iconData: (Icons.delete)),
+                  icon: const AdaptiveIcon(Icons.delete)),
             ],
           );
         });

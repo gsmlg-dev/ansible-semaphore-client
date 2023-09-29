@@ -204,13 +204,13 @@ Future<List<TaskOutput>> taskOutput(TaskOutputRef ref, int id) async {
 }
 
 @riverpod
-Stream<List<TaskOutput>> taskOutputStream(
+Stream<(Task, List<TaskOutput>)> taskOutputStream(
     TaskOutputStreamRef ref, int taskId) async* {
   Task task;
   do {
     task = await ref.read(taskFamilyProvider(taskId).future);
     final output = await ref.read(taskOutputProvider(taskId).future);
-    yield output;
+    yield (task, output);
     await Future.delayed(const Duration(seconds: 1));
   } while (task.status == 'waiting' || task.status == 'running');
 }

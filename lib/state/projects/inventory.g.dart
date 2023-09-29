@@ -116,8 +116,8 @@ class InventoryFormRequestProvider extends AutoDisposeNotifierProviderImpl<
     InventoryFormRequest, InventoryRequest> {
   /// See also [InventoryFormRequest].
   InventoryFormRequestProvider(
-    this.item,
-  ) : super.internal(
+    Inventory? item,
+  ) : this._internal(
           () => InventoryFormRequest()..item = item,
           from: inventoryFormRequestProvider,
           name: r'inventoryFormRequestProvider',
@@ -128,9 +128,51 @@ class InventoryFormRequestProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: InventoryFormRequestFamily._dependencies,
           allTransitiveDependencies:
               InventoryFormRequestFamily._allTransitiveDependencies,
+          item: item,
         );
 
+  InventoryFormRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.item,
+  }) : super.internal();
+
   final Inventory? item;
+
+  @override
+  InventoryRequest runNotifierBuild(
+    covariant InventoryFormRequest notifier,
+  ) {
+    return notifier.build(
+      item,
+    );
+  }
+
+  @override
+  Override overrideWith(InventoryFormRequest Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: InventoryFormRequestProvider._internal(
+        () => create()..item = item,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        item: item,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<InventoryFormRequest, InventoryRequest>
+      createElement() {
+    return _InventoryFormRequestProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -144,15 +186,21 @@ class InventoryFormRequestProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin InventoryFormRequestRef
+    on AutoDisposeNotifierProviderRef<InventoryRequest> {
+  /// The parameter `item` of this provider.
+  Inventory? get item;
+}
+
+class _InventoryFormRequestProviderElement
+    extends AutoDisposeNotifierProviderElement<InventoryFormRequest,
+        InventoryRequest> with InventoryFormRequestRef {
+  _InventoryFormRequestProviderElement(super.provider);
 
   @override
-  InventoryRequest runNotifierBuild(
-    covariant InventoryFormRequest notifier,
-  ) {
-    return notifier.build(
-      item,
-    );
-  }
+  Inventory? get item => (origin as InventoryFormRequestProvider).item;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

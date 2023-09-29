@@ -38,7 +38,10 @@ class AdaptiveTextField extends StatelessWidget {
         children: [
           decoration?.labelText != null
               ? Text(decoration!.labelText!, style: theme.typography.headline)
-              : Container(),
+              : const SizedBox(),
+          decoration?.labelText != null
+              ? const SizedBox(height: 12.0)
+              : const SizedBox(),
           MacosTextFormField(
             initialValue: initialValue,
             obscureText: obscureText,
