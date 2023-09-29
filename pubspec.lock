@@ -29,10 +29,10 @@ packages:
     dependency: "direct main"
     description:
       name: ansible_semaphore
-      sha256: "9518e5a9f3453e4edd46542d7927acae465bd95072bb301cd328ffbf33f0a45d"
+      sha256: "480a02beb9f23086d166b8b2714447266b8f10880c374030c2001e3f86849d92"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.7"
+    version: "1.2.3"
   archive:
     dependency: transitive
     description:

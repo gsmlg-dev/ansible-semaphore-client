@@ -21,7 +21,7 @@ dependencies:
   isar_flutter_libs: ^3.1.0+1
   path_provider: ^2.0.15
   material_neumorphic: ^1.1.1
-  ansible_semaphore: ^1.1.0
+  ansible_semaphore: ^1.2.3
   dio: ^5.3.1
   pluto_grid: ^7.0.2
   freezed_annotation: ^2.4.1
