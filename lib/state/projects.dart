@@ -1,6 +1,7 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:semaphore/state/api_config.dart';
+import 'package:semaphore/state/shared_prefs.dart';
 
 part 'projects.g.dart';
 
@@ -11,7 +12,6 @@ class Projects extends _$Projects {
     try {
       final api = ref.read(semaphoreApiProvider).getProjectsApi();
       final resp = await api.projectsGet();
-      // print('projects resp: $resp');
       return resp.data ?? <Project>[];
     } catch (e) {
       return <Project>[];
@@ -23,7 +23,6 @@ class Projects extends _$Projects {
     state = await AsyncValue.guard(() async {
       try {
         final resp = await api.projectsGet();
-        // print('projects resp: $resp');
         return resp.data ?? <Project>[];
       } catch (e) {
         return <Project>[];
@@ -65,19 +64,32 @@ class Projects extends _$Projects {
 
 @riverpod
 class CurrentProject extends _$CurrentProject {
+  static const saveKey = 'currentProject';
+
   @override
   Future<Project?> build() async {
     try {
-      final projects = await ref.read(projectsProvider.future);
-      print('projects: $projects');
-      return projects.first;
+      final projects = ref.watch(projectsProvider);
+      final pref = await ref.read(sharedPrefsProvider.future);
+      final projId = pref.getInt(saveKey);
+      if (projId == null) {
+        return null;
+      }
+      print(('project id', projId));
+      return projects.asData?.value
+          .firstWhere((element) => element.id == projId);
     } catch (e) {
       return null;
     }
   }
 
-  void setCurrent(Project? p) {
+  Future<void> setCurrent(Project? p) async {
     state = AsyncValue.data(p);
+    if (p != null) {
+      final pref = await ref.read(sharedPrefsProvider.future);
+      final ok = await pref.setInt(saveKey, p.id!);
+      print('set current project: $ok ${p.id}');
+    }
   }
 }
 

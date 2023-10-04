@@ -1,6 +1,8 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:semaphore/database/schema/semaphore_server.dart'
+    show SemaphoreServer;
 import 'package:semaphore/state/server.dart';
 
 part 'api_config.g.dart';
@@ -9,8 +11,10 @@ part 'api_config.g.dart';
 class SemaphoreApi extends _$SemaphoreApi {
   @override
   AnsibleSemaphore build() {
-    final currentServer = ref.watch(serversProvider.notifier).currentServer();
-    if (currentServer == null) {
+    final servers = ref.watch(serversProvider);
+    final currentServer = servers.firstWhere((s) => s.isActive == true,
+        orElse: () => SemaphoreServer());
+    if (currentServer.isActive == null) {
       return AnsibleSemaphore();
     }
     final apiUrl = currentServer.apiUrl;

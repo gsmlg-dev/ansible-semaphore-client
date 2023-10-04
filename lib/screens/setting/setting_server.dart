@@ -12,6 +12,7 @@ import 'package:semaphore/adaptive/text.dart';
 import 'package:semaphore/adaptive/text_timeago.dart';
 import 'package:semaphore/components/server/form.dart';
 import 'package:semaphore/state/auth.dart';
+import 'package:semaphore/state/projects.dart';
 import 'package:semaphore/state/server.dart';
 
 class ServerSetting extends ConsumerWidget {
@@ -110,12 +111,16 @@ class ServerSetting extends ConsumerWidget {
                       cells: <DataCell>[
                         DataCell(
                           s.isActive == true
-                              ? const AdaptiveIcon(Icons.check_box_outlined)
+                              ? const AdaptiveIconButton(
+                                  icon: AdaptiveIcon(Icons.check_box_outlined))
                               : AdaptiveIconButton(
                                   onPressed: () {
                                     ref
                                         .read(serversProvider.notifier)
                                         .activeServer(s);
+                                    ref
+                                        .read(projectsProvider.notifier)
+                                        .reloadProjects();
                                   },
                                   icon: const AdaptiveIcon(
                                       Icons.check_box_outline_blank)),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:semaphore/adaptive/icon.dart';
@@ -10,6 +12,7 @@ import 'package:semaphore/screens/home/home_screen.dart';
 import 'package:semaphore/screens/setting/setting_project.dart';
 import 'package:semaphore/screens/setting/setting_server.dart';
 import 'package:semaphore/screens/setting/setting_theme.dart';
+import 'package:semaphore/state/projects.dart';
 import 'package:semaphore/state/server.dart';
 
 enum SettingsScreenModule { theme, server, project }
@@ -38,17 +41,24 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentServer = ref.watch(serversProvider.notifier).currentServer();
+    final currentProject = ref.watch(currentProjectProvider);
 
     return AdaptiveScaffold(
         appBar: LocalAppBar(
             title: 'Settings',
             leading: currentServer == null
                 ? const SizedBox()
-                : AdaptiveIconButton(
-                    icon: const AdaptiveIcon(Icons.arrow_back_ios),
-                    onPressed: () {
-                      ref.read(routerProvider).goNamed(HomeScreen.name);
-                    },
+                : currentProject.when(
+                    data: (currentProject) => currentProject == null
+                        ? const SizedBox()
+                        : AdaptiveIconButton(
+                            icon: const AdaptiveIcon(Icons.arrow_back_ios),
+                            onPressed: () {
+                              ref.read(routerProvider).goNamed(HomeScreen.name);
+                            },
+                          ),
+                    loading: () => const SizedBox(),
+                    error: (error, stack) => const SizedBox(),
                   )),
         body: SafeArea(
           child: AdaptiveTabView(

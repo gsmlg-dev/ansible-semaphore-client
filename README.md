@@ -6,7 +6,7 @@ Run ansible task from your phone.
 
 Download from
 
-- [AppStore]()
+- [AppStore](https://apps.apple.com/cn/app/ansible-semaphore-client/id6458789575?l=en-GB)
 - [PlayStore](https://play.google.com/store/apps/details?id=org.gsmlg.semaphore)
 - [F-Droid]()
 

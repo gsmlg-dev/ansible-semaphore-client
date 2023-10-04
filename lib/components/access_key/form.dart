@@ -4,7 +4,6 @@ import 'package:ansible_semaphore/ansible_semaphore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:macos_ui/macos_ui.dart';
-import 'package:material_neumorphic/material_neumorphic.dart';
 import 'package:semaphore/adaptive/button.dart';
 import 'package:semaphore/adaptive/dropdown.dart';
 import 'package:semaphore/adaptive/text_field.dart';
@@ -197,9 +196,10 @@ class AccessKeyForm extends ConsumerWidget {
                                       .read(accessKeyFormRequestProvider(
                                               accessKey)
                                           .notifier)
-                                      .postAccessKey();
-                                  if (context.mounted)
+                                      .postAccessKey(accessKey.id);
+                                  if (context.mounted) {
                                     Navigator.of(context).pop();
+                                  }
                                   ref
                                       .read(accessKeyListProvider.notifier)
                                       .loadRows();

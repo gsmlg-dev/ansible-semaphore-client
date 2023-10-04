@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_neumorphic/material_neumorphic.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:semaphore/adaptive/floatingAction.dart';
 import 'package:semaphore/adaptive/icon.dart';
@@ -16,7 +15,7 @@ class TemplateScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
     // final currentProject = ref.watch(currentProjectProvider);
     final templateList = ref.watch(templateListProvider);
@@ -24,10 +23,10 @@ class TemplateScreen extends ConsumerWidget {
     return AdaptiveScaffold(
       drawer: const LocalDrawer(),
       appBar: const LocalAppBar(title: 'Task Template'),
-      floatingAction: AdaptiveFloatingAction(
-        icon: const AdaptiveIcon(Icons.add),
-        onPressed: () {},
-      ),
+      // floatingAction: AdaptiveFloatingAction(
+      //   icon: const AdaptiveIcon(Icons.add),
+      //   onPressed: () {},
+      // ),
       body: SafeArea(
         child: PlutoGrid(
           mode: PlutoGridMode.readOnly,

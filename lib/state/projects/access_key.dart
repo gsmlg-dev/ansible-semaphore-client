@@ -1,7 +1,7 @@
 import 'package:ansible_semaphore/ansible_semaphore.dart';
+import 'package:dio/dio.dart' show DioException;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:macos_ui/macos_ui.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:semaphore/adaptive/alert_dialog.dart';
@@ -55,16 +55,27 @@ class AccessKeyDataTable extends BaseGridData<AccessKey> {
                       primaryButton: AdaptiveButton(
                           color: Colors.redAccent,
                           onPressed: () async {
-                            final api =
-                                ref.read(semaphoreApiProvider).getProjectApi();
-                            final current =
-                                await ref.read(currentProjectProvider.future);
-                            await api.projectProjectIdKeysKeyIdDelete(
-                                projectId: current!.id!, keyId: accessKey.id!);
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
+                            try {
+                              final api = ref
+                                  .read(semaphoreApiProvider)
+                                  .getProjectApi();
+                              final current =
+                                  await ref.read(currentProjectProvider.future);
+                              await api.projectProjectIdKeysKeyIdDelete(
+                                  projectId: current!.id!,
+                                  keyId: accessKey.id!);
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                              ref
+                                  .read(accessKeyListProvider.notifier)
+                                  .loadRows();
+                            } on DioException catch (e) {
+                              print(e.response?.statusCode);
+                            } catch (e, s) {
+                              print(e);
+                              print(s);
                             }
-                            ref.read(accessKeyListProvider.notifier).loadRows();
                           },
                           child: const Text('Delete')),
                       secondaryButton: AdaptiveButton(
@@ -223,11 +234,11 @@ class AccessKeyFormRequest extends _$AccessKeyFormRequest {
     );
   }
 
-  Future<AccessKey?> postAccessKey() async {
+  Future<AccessKey?> postAccessKey(int? keyId) async {
     final api = ref.read(semaphoreApiProvider).getProjectApi();
     final current = await ref.read(currentProjectProvider.future);
     try {
-      if (item?.id == null) {
+      if (keyId == null) {
         final resp = await api.projectProjectIdKeysPost(
             projectId: current?.id ?? 1, accessKey: state);
 
@@ -237,13 +248,14 @@ class AccessKeyFormRequest extends _$AccessKeyFormRequest {
         return null;
       } else {
         final resp = await api.projectProjectIdKeysKeyIdPut(
-            projectId: current?.id ?? 1, keyId: item!.id!, accessKey: state);
+            projectId: current?.id ?? 1, keyId: keyId, accessKey: state);
         if (resp.statusCode == 201) {
           return null;
         }
         return null;
       }
     } catch (e) {
+      print(e);
       return null;
     }
   }

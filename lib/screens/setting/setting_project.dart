@@ -8,6 +8,7 @@ import 'package:semaphore/adaptive/dialog.dart';
 import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/text.dart';
 import 'package:semaphore/components/project/form.dart';
+import 'package:semaphore/state/auth.dart';
 import 'package:semaphore/state/projects.dart';
 
 class ProjectSetting extends ConsumerWidget {
@@ -23,6 +24,8 @@ class ProjectSetting extends ConsumerWidget {
     final projects = ref.watch(projectsProvider);
     final currentProject = ref.watch(currentProjectProvider);
 
+    final currentUser = ref.watch(currentUserProvider);
+
     return SizedBox.expand(
         child: Padding(
       padding: const EdgeInsets.all(24.0),
@@ -35,15 +38,25 @@ class ProjectSetting extends ConsumerWidget {
             runSpacing: 16.0,
             children: [
               const AdaptiveTextTitle('Switch Projects'),
-              AdaptiveButton(
-                color: primaryColor,
-                child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.add, color: Colors.white),
-                  Text('Add', style: TextStyle(color: Colors.white)),
-                ]),
-                onPressed: () {
-                  adaptiveDialog(context: context, child: const ProjectForm());
-                },
+              currentUser.when(
+                data: (user) => user?.admin == true
+                    ? AdaptiveButton(
+                        color: primaryColor,
+                        child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.add, color: Colors.white),
+                              Text('Add',
+                                  style: TextStyle(color: Colors.white)),
+                            ]),
+                        onPressed: () {
+                          adaptiveDialog(
+                              context: context, child: const ProjectForm());
+                        },
+                      )
+                    : const SizedBox(),
+                loading: () => const SizedBox(),
+                error: (error, stack) => const SizedBox(),
               ),
             ],
           ),
