@@ -6,7 +6,7 @@ part of 'api_config.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$semaphoreApiHash() => r'118eed699331b937fa710917d0d9d2dea8e4337e';
+String _$semaphoreApiHash() => r'62c4855a9c71d4b5d16a08982000a13d210cb2a0';
 
 /// See also [SemaphoreApi].
 @ProviderFor(SemaphoreApi)
