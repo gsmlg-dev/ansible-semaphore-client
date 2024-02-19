@@ -9,11 +9,23 @@ import 'package:semaphore/adaptive/icon.dart';
 import 'package:semaphore/adaptive/icon_button.dart';
 import 'package:semaphore/components/status_chip.dart';
 import 'package:semaphore/state/projects/task.dart';
+import 'package:flutter/material.dart';
 
 class TaskOutputView extends ConsumerWidget {
   final int id;
 
   const TaskOutputView({super.key, required this.id});
+
+  static const Map<String, Color> colorMap = {
+    '30': Colors.black,
+    '31': Colors.red,
+    '32': Colors.green,
+    '33': Colors.yellow,
+    '34': Colors.blue,
+    '35': Colors.purple,
+    '36': Colors.cyan,
+    '37': Colors.white
+  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,30 +79,43 @@ class TaskOutputView extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: taskOutput
-                          .map((line) => SelectableText.rich(TextSpan(
-                                  text: line.time?.toLocal().toString() ?? '',
-                                  style: GoogleFonts.robotoMono(
-                                    textStyle: TextStyle(
-                                        color: isDark
-                                            ? Colors.lightGreenAccent
-                                            : Colors.lightGreen),
-                                  ),
-                                  children: <InlineSpan>[
-                                    const TextSpan(text: '\t'),
-                                    TextSpan(
-                                      text: line.output?.replaceAll(
-                                              RegExp(r'\u001b\[([0-9;]+)m'),
-                                              '') ??
-                                          '',
-                                      style: GoogleFonts.robotoMono(
-                                        textStyle: TextStyle(color: textColor),
-                                      ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: taskOutput
+                            .map((line) => SelectableText.rich(
+                                  TextSpan(
+                                    text: line.time?.toLocal().toString() ?? '',
+                                    style: GoogleFonts.robotoMono(
+                                      textStyle: TextStyle(
+                                          color: isDark
+                                              ? Colors.lightGreenAccent
+                                              : Colors.lightGreen),
                                     ),
-                                  ])))
-                          .toList(),
+                                    children: <InlineSpan>[
+                                      const TextSpan(text: '\t'),
+                                      TextSpan(
+                                        text: line.output?.replaceAll(
+                                                RegExp(r'\u001b\[([0-9;]+)m'),
+                                                '') ??
+                                            '',
+                                        style: GoogleFonts.robotoMono(
+                                          textStyle: TextStyle(
+                                            color: line.output == null
+                                                ? textColor
+                                                : colorMap[RegExp(r'\u001b\[[0-9];([0-9]+)m')
+                                                            .firstMatch(
+                                                                line.output!)
+                                                            ?.group(1)] ?? textColor ,
+                                          ),
+                                        ), // GoogleFonts.robotoMono
+                                      ),
+                                    ],
+                                  ),
+                                ))
+                            .toList(),
+                      ),
                     ),
                   ),
                 ),
