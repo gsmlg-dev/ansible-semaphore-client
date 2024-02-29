@@ -95,25 +95,24 @@ class TaskOutputView extends ConsumerWidget {
                                     ),
                                     children: <InlineSpan>[
                                       const TextSpan(text: '\t'),
-                                      TextSpan(
-                                        text: line.output?.replaceAll(
+                                      ...line.output?.split('\u001b[0m').map(segment => 
+                                                                         TextSpan(
+                                        text: segment.replaceAll(
                                                 RegExp(r'\u001b\[([0-9;]+)m'),
                                                 '') ??
                                             '',
                                         style: GoogleFonts.robotoMono(
                                           textStyle: TextStyle(
-                                            color: line.output == null
+                                            color: segment == null
                                                 ? textColor
                                                 : colorMap[RegExp(r'\u001b\[[0-9];([0-9]+)m')
-                                                            .firstMatch(
-                                                                line.output!)
+                                                            .firstMatch(segment)
                                                             ?.group(1)] ?? textColor ,
                                           ),
                                         ), // GoogleFonts.robotoMono
                                       ),
-                                    ],
-                                  ),
-                                ))
+                                      ).toList(),
+                                    ])))
                             .toList(),
                       ),
                     ),
