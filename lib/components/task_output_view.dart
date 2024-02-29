@@ -78,46 +78,57 @@ class TaskOutputView extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: taskOutput
-                            .map((line) => SelectableText.rich(
-                                  TextSpan(
-                                    text: line.time?.toLocal().toString() ?? '',
-                                    style: GoogleFonts.robotoMono(
-                                      textStyle: TextStyle(
-                                          color: isDark
-                                              ? Colors.lightGreenAccent
-                                              : Colors.lightGreen),
-                                    ),
-                                    children: <InlineSpan>[
-                                      const TextSpan(text: '\t'),
-                                      ...line.output?.split('\u001b[0m').map(segment => 
-                                                                         TextSpan(
-                                        text: segment.replaceAll(
-                                                RegExp(r'\u001b\[([0-9;]+)m'),
-                                                '') ??
-                                            '',
-                                        style: GoogleFonts.robotoMono(
-                                          textStyle: TextStyle(
-                                            color: segment == null
-                                                ? textColor
-                                                : colorMap[RegExp(r'\u001b\[[0-9];([0-9]+)m')
-                                                            .firstMatch(segment)
-                                                            ?.group(1)] ?? textColor ,
-                                          ),
-                                        ), // GoogleFonts.robotoMono
-                                      ),
-                                      ).toList(),
-                                    ])))
-                            .toList(),
-                      ),
-                    ),
-                  ),
+  child: SingleChildScrollView(
+    child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: taskOutput.map((line) {
+          List<InlineSpan> coloredSegments = [];
+          RegExp colorRegex = RegExp(r'\u001b\[[0-9];([0-9]+)m');
+          List<String> segments = line.output?.split('\u001b[0m');
+
+          if (segments != null) {
+            for (String segment in segments) {
+              Color textColor;
+
+              // Check if the segment matches the color code pattern
+              if (colorRegex.hasMatch(segment)) {
+                String colorCode = colorRegex.firstMatch(segment)?.group(1);
+                textColor = colorMap[colorCode] ?? textColor;
+              } else {
+                // If the segment does not match the color code pattern, apply the default text color
+                textColor = textColor;
+              }
+
+              coloredSegments.add(TextSpan(
+                text: segment.replaceAll(colorRegex, ''), // Remove color codes
+                style: GoogleFonts.robotoMono(
+                  textStyle: TextStyle(color: textColor),
                 ),
+              ));
+            }
+          }
+
+          return SelectableText.rich(
+            TextSpan(
+              text: line.time?.toLocal().toString() ?? '',
+              style: GoogleFonts.robotoMono(
+                textStyle: TextStyle(
+                  color: isDark ? Colors.lightGreenAccent : Colors.lightGreen,
+                ),
+              ),
+              children: <InlineSpan>[
+                const TextSpan(text: '\t'),
+                ...coloredSegments,
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    ),
+  ),
+),
               ],
             );
           },
