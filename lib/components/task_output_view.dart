@@ -89,18 +89,18 @@ class TaskOutputView extends ConsumerWidget {
           List<String> segments = line.output?.split('\u001b[0m') ?? [];
           
             for (String segment in segments) {
-              Color specificColor;
+              Color specificColor = textColor;
 
               // Check if the segment matches the color code pattern
               if (colorRegex.hasMatch(segment)) {
-                String colorCode = colorRegex.firstMatch(segment).group(1);
+                String colorCode = colorRegex.firstMatch(segment)?.group(1) ?? '';
                 specificColor = colorMap[colorCode] ?? textColor;
               }
 
               coloredSegments.add(TextSpan(
                 text: segment.replaceAll(colorRegex, ''), // Remove color codes
                 style: GoogleFonts.robotoMono(
-                  textStyle: TextStyle(color: specificColor ?? textColor),
+                  textStyle: TextStyle(color: specificColor),
                 ),
               ));
             }
