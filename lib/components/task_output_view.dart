@@ -86,9 +86,8 @@ class TaskOutputView extends ConsumerWidget {
         children: taskOutput.map((line) {
           List<InlineSpan> coloredSegments = [];
           RegExp colorRegex = RegExp(r'\u001b\[[0-9];([0-9]+)m');
-          List<String> segments = line.output?.split('\u001b[0m');
-
-          if (segments != null) {
+          List<String> segments = line.output?.split('\u001b[0m') ?? [];
+          
             for (String segment in segments) {
               Color textColor;
 
@@ -108,7 +107,6 @@ class TaskOutputView extends ConsumerWidget {
                 ),
               ));
             }
-          }
 
           return SelectableText.rich(
             TextSpan(
